@@ -1,0 +1,4 @@
+# ignoring environment 
+./db/env2.js
+./env.js
+./test2.js
