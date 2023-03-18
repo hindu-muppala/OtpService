@@ -1,12 +1,8 @@
 const http = require('node:http');
 const client = require('./db/db');
-const auth2 = require('./env')
 const hostname = '127.0.0.1';
 const port = 8080;
-const OtpServer = http.createServer(async (req, res) => {  
-    console.log(req.headers)
-    console.log(req.method)
-    console.log(req.url)
+const OtpServer = http.createServer(async (req, res) => { 
     if (req.headers['content-type'] === 'application/json' && req.method === 'GET' && req.url === '/verifyOtp') {
         const buffers2 = [];
         try {
@@ -24,14 +20,11 @@ const OtpServer = http.createServer(async (req, res) => {
         try {
             console.log(data2)
             const {name,phonenumber,otp}=data2;
-            console.log(`${name} ${phonenumber} ${otp}`)
             await client.connect();
             console.log("Connected correctly to server");
             const db = client.db("OtpService");
             const col = db.collection("otps");
             const filteredDocs = await col.find({ "name": name,"phonenumber": phonenumber,"otp": otp}).toArray();
-            console.log('Found documents filtered by { a: 3 } =>', filteredDocs);
-
             if (filteredDocs.length!=0) {
                 if(Date.now()-filteredDocs.data< 1,80,000){
                     console.log("Let see")
@@ -43,7 +36,6 @@ const OtpServer = http.createServer(async (req, res) => {
                     return  res.end(JSON.stringify({message:"sucessfully authenticated"}))
                 }
                 else{
-                    console.log(filteredDocs[0]._id)
                     await col.deleteOne({"_id":filteredDocs[0]._id}).then(()=>{
                     console.log("deleted")})
                     res.statusCode= 404
@@ -65,7 +57,6 @@ const OtpServer = http.createServer(async (req, res) => {
         console.log(buffers)
         var data = Buffer.concat(buffers).toString()
         data = JSON.parse(data)
-        console.log(data)
         if (data) { // change
             console.log("data")
             const bool = await verify(data)
@@ -89,14 +80,12 @@ const verify = async (data) => {
     console.log(data)
     if (data.auth!=undefined && data.auth.name != null && data.auth.phonenumber != null) {
         const Otp_number = otp()
-        const accountSid = auth2.sid;
-        const authToken = auth2.token;
-        const client = require('twilio')(accountSid, authToken);
+        const client = require('twilio')(process.env.sid, process.env.token);
         client.messages
             .create({
                 body: `your seven digts verification code :${Otp_number}`,
-                from:`${auth2.number}`,
-                to: `${data.auth.phonenumber}`
+                from:`${process.env.number}`,
+                to: `${data.auth.number}`
             })
             .then(message => {
                 console.log(message.sid)
@@ -115,9 +104,7 @@ async function run(Otp_number, name, phonenumber) {
         const db = client.db("OtpService");
         const col = db.collection("otps");
         const v = {  "name": name, "phonenumber": phonenumber ,"otp": Otp_number,"date": Date.now()}
-        console.log(v)
         const p = await col.insertOne(v);
-        console.log(p)
     } catch (err) {
         console.log(err.stack);
     }
