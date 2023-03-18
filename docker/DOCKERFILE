@@ -1,0 +1,7 @@
+FROM node:18-alpine
+ENV NODE_ENV=production
+WORKDIR /otpService
+COPY ["/package.json","package-lock.json","./"]
+COPY . /otpService
+CMD ["node","server.js"]
+

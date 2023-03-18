@@ -1,6 +1,6 @@
 
 
 const { MongoClient, ServerApiVersion } = require('mongodb');
-const uri=require('./env2.js')
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+require('dotenv').config()
+const client = new MongoClient(process.env.url, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 module.exports=client

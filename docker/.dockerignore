@@ -1,0 +1,4 @@
+/node-modules
+/DOCKER/DOCKERFILE
+/DOCKER/.dockerignore
+/.gitignore
