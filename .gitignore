@@ -1,5 +1,7 @@
 # ignoring environment 
 .env
+.env3
 node_modules
 env3.js
+docker
 
