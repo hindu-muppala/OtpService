@@ -1,7 +1,7 @@
 let chai=require("chai");
 const assert=chai.assert;
 let chaiHttp=require('chai-http');
-let server=require('../index2')
+let server=require('../index')
 var expect = chai.expect;
 chai.use(chaiHttp)
 describe('Otp Service', ()=>{
