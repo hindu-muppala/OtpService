@@ -3,6 +3,7 @@ const client = require('./db/db');
 const hostname = '127.0.0.1';
 const port = 8080;
 const OtpServer = http.createServer(async (req, res) => { 
+    res.setHeader('Content-Type', 'application/json')
     if (req.headers['content-type'] === 'application/json' && req.method === 'GET' && req.url === '/verifyOtp') {
         const buffers2 = [];
         try {
@@ -10,7 +11,6 @@ const OtpServer = http.createServer(async (req, res) => {
                 buffers2.push(chunk)
                 const data3 = Buffer.concat(buffers2).toString()
                 data2 = JSON.parse(data3)
-                console.log(data2)
             }
         }
         catch(err) {
@@ -26,8 +26,7 @@ const OtpServer = http.createServer(async (req, res) => {
             const col = db.collection("otps");
             const filteredDocs = await col.find({ "name": name,"phonenumber": phonenumber,"otp": otp}).toArray();
             if (filteredDocs.length!=0) {
-                if(Date.now()-filteredDocs.data< 1,80,000){
-                    console.log("Let see")
+                if(Date.now()-filteredDocs[0].date < 180000){
                     await col.deleteOne({"_id":filteredDocs[0]._id}).then(()=>{
                         console.log("deleted")
                     })
@@ -39,7 +38,7 @@ const OtpServer = http.createServer(async (req, res) => {
                     await col.deleteOne({"_id":filteredDocs[0]._id}).then(()=>{
                     console.log("deleted")})
                     res.statusCode= 404
-                    return  res.end(JSON.stringify({message:"otp valid for 3 mins"}))
+                    return  res.end(JSON.stringify({message:"otp only valid for 3 mins"}))
                 }
             }
         } catch (err) {
@@ -58,7 +57,6 @@ const OtpServer = http.createServer(async (req, res) => {
         var data = Buffer.concat(buffers).toString()
         data = JSON.parse(data)
         if (data) { // change
-            console.log("data")
             const bool = await verify(data)
             // res.setHeader('Set-Cookie', ['foo=bar', 'bar=baz']);
             // res.sendDate = false // default is true
@@ -85,12 +83,12 @@ const verify = async (data) => {
             .create({
                 body: `your seven digts verification code :${Otp_number}`,
                 from:`${process.env.number}`,
-                to: `${data.auth.number}`
+                to: `${data.auth.phonenumber}`
             })
             .then(message => {
-                console.log(message.sid)
                 run(Otp_number, data.auth.name, data.auth.phonenumber)
-            }).catch(() => {
+            }).catch((err) => {
+                console.log(err)
                 console.log("Unverified number")
                 return false
             });
