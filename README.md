@@ -13,8 +13,16 @@ npm install
 ```
 Change the authentication details in ./env file.
 ```
+sid= "xxxxxxxxxxxxxxxxx"
+token=  "xxxxxxxxxxxxxxxxx"
+number=  "xxxxxxxxxxxxx"
+url ="xxxxxxxxxxxxxxxxxxx"
+
+replace details of your twilio account and url of MongoDb atlas
+```
+```
 node index.js
 ```
 # :hammer_and_pick: Tools used
-node.js 
+node.js ,MongoDb atlas
 
