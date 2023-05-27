@@ -1,5 +1,5 @@
 # OtpService
-OtpService is an general application . By this application, we can send and verify OTP
+OtpService is an general application . By this application, we can send and verify OTP.
 # 👨‍💻 How to use
 ```
 git clone https://github.com/hindu-muppala/OtpService.git
